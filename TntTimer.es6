@@ -31,6 +31,10 @@ TntTimer.prototype.start = function (name, tags) {
     }
 };
 
+/**
+ *
+ * @param name The name for this timer
+ */
 TntTimer.prototype.stop = function (name) {
     if (!this.timers[name]) {
         throw new Error('Timer ' + name + ' not found');
@@ -56,6 +60,31 @@ TntTimer.prototype.time = function (name1, name2) {
 
     return this.timers[name1].start.drift(this.timers[name2].end);
 };
+
+/**
+ *
+ * @param formatFunctionName The name of function for format the number, can be empty, sec, msec, usec , nsec.
+ * @param suffix A boolean value to transform the return value in a string with the suffix. i.e.:
+ *  if false : 123,233
+ *  if true : 123.233 ms
+ */
+TntTimer.prototype.getAll = function (formatFunctionName, suffix) {
+    let timersTime = {};
+    let nameToInsert = '';
+    for (let timeIndex in this.timers) {
+        nameToInsert = timeIndex;
+        if(timeIndex === 'tnt_timer'){
+            nameToInsert = 'total_time'
+        }
+        if (funcName && typeof this.time(timeIndex)[funcName] === 'function') {
+            timersTime[nameToInsert] = this.time(timeIndex)[funcName](suffix);
+        } else {
+            timersTime[nameToInsert] = this.time(timeIndex);
+        }
+    }
+    return timersTime;
+};
+
 
 TntTimer.prototype.total = function (tag) {
     if (tag) {
